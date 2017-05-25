@@ -60,20 +60,20 @@ public class ShareFile {
         return this.isBase64File() || this.isLocalFile();
     }
     public boolean isBase64File() {
-        if(uri.getScheme().equals("data")) {
+        if(this.uri.getScheme().equals("data")) {
             this.type = this.uri.getSchemeSpecificPart().substring(0, this.uri.getSchemeSpecificPart().indexOf(";"));
             return true;
         }
         return false;
     }
     public boolean isLocalFile() {
-        if(uri.getScheme().equals("content") || uri.getScheme().equals("file")) {
+        if(this.uri.getScheme().equals("content") || this.uri.getScheme().equals("file")) {
             // type is already set
             if (this.type != null) {
                 return true;
             }
             // try to get mimetype from uri
-            this.type = this.getMimeType(uri.toString());
+            this.type = this.getMimeType(this.uri.toString());
 
             // try resolving the file and get the mimetype
             if(this.type == null) {
