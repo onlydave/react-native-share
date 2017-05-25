@@ -15,7 +15,7 @@ static UIDocumentInteractionController *documentInteractionController;
     failureCallback:(RCTResponseErrorBlock)failureCallback
     successCallback:(RCTResponseSenderBlock)successCallback {
 
-    NSLog(@"Try open view");
+    NSLog(@"Try open view 3");
 
     if ([options objectForKey:@"message"] && [options objectForKey:@"message"] != [NSNull null]) {
         NSString *text = [RCTConvert NSString:options[@"message"]];
@@ -39,9 +39,21 @@ static UIDocumentInteractionController *documentInteractionController;
 
         if ([options[@"url"] rangeOfString:@"data:image\/([a-zA-Z]*);base64,([^\"]*)" options:NSRegularExpressionSearch].location != NSNotFound) {
             NSLog(@"Sending whatsapp image");
-            NSLog(options[@"url"]);
 
-            documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:options[@"url"]]];
+            NSData *data = [[NSData alloc]initWithBase64EncodedString:options[@"url"] options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            UIImage *image = [UIImage imageWithData:data];
+
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+
+            if ([options[@"url"] rangeOfString:@"data:image\/png;base64,([^\"]*)" options:NSRegularExpressionSearch].location != NSNotFound) {
+              NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"betshare.png"];
+              [UIImagePNGRepresentation(image) writeToFile:filePath atomically:YES];
+            } else {
+              NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"betshare.jpg"];
+              [UIImageJPEGRepresentation(image, 1.0) writeToFile:filePath atomically:YES];
+            }
+
+            documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:filePath]];
             documentInteractionController.UTI = @"net.whatsapp.image";
             documentInteractionController.delegate = self;
 
