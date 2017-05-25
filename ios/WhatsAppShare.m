@@ -15,7 +15,7 @@ static UIDocumentInteractionController *documentInteractionController;
     failureCallback:(RCTResponseErrorBlock)failureCallback
     successCallback:(RCTResponseSenderBlock)successCallback {
 
-    NSLog(@"Try open view 3");
+    NSLog(@"Try open view");
 
     if ([options objectForKey:@"message"] && [options objectForKey:@"message"] != [NSNull null]) {
         NSString *text = [RCTConvert NSString:options[@"message"]];
@@ -41,23 +41,27 @@ static UIDocumentInteractionController *documentInteractionController;
             NSLog(@"Sending whatsapp image");
 
             NSData *data = [[NSData alloc]initWithBase64EncodedString:options[@"url"] options:NSDataBase64DecodingIgnoreUnknownCharacters];
-            UIImage *image = [UIImage imageWithData:data];
+            // UIImage *image = [UIImage imageWithData:data];
 
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            
+            // NSString *filePath;
 
-            if ([options[@"url"] rangeOfString:@"data:image\/png;base64,([^\"]*)" options:NSRegularExpressionSearch].location != NSNotFound) {
-              NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"betshare.png"];
-              [UIImagePNGRepresentation(image) writeToFile:filePath atomically:YES];
-            } else {
+            // if ([options[@"url"] rangeOfString:@"data:image\/png;base64,([^\"]*)" options:NSRegularExpressionSearch].location != NSNotFound) {
+              // NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"betshare.png"];
+              // [UIImagePNGRepresentation(image) writeToFile:filePath atomically:YES];
+            // } else {
               NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"betshare.jpg"];
-              [UIImageJPEGRepresentation(image, 1.0) writeToFile:filePath atomically:YES];
-            }
+              // [UIImageJPEGRepresentation(image, 1.0) writeToFile:filePath atomically:YES];
+              [data writeToFile:filePath atomically:YES];
+            // }
 
             documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:filePath]];
-            documentInteractionController.UTI = @"net.whatsapp.image";
+            // documentInteractionController.UTI = @"net.whatsapp.image";
+            documentInteractionController.UTI = @"public.image";
             documentInteractionController.delegate = self;
 
-            [documentInteractionController presentOpenInMenuFromRect:CGRectMake(0, 0, 0, 0) inView:[[[[[UIApplication sharedApplication] delegate] window] rootViewController] view] animated:YES];
+            // [documentInteractionController presentOpenInMenuFromRect:CGRectMake(0, 0, 0, 0) inView:[[[[[UIApplication sharedApplication] delegate] window] rootViewController] view] animated:YES];
             NSLog(@"Done whatsapp image");
             successCallback(@[]);
         } else {
