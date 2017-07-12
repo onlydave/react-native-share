@@ -17,7 +17,9 @@
 
     if ([options objectForKey:@"message"] && [options objectForKey:@"message"] != [NSNull null]) {
         NSString *text = [RCTConvert NSString:options[@"message"]];
-        text = [text stringByAppendingString: [@" " stringByAppendingString: options[@"url"]] ];
+        if ([options[@"url"] rangeOfString:@"data:image\/([a-zA-Z]*);base64,([^\"]*)" options:NSRegularExpressionSearch].location == NSNotFound) {
+          text = [text stringByAppendingString: [@" " stringByAppendingString: options[@"url"]] ];
+        }
         text = (NSString*)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,(CFStringRef) text, NULL,CFSTR("!*'();:@&=+$,/?%#[]"),kCFStringEncodingUTF8));
         
         NSString * urlWhats = [NSString stringWithFormat:@"whatsapp://send?text=%@", text];
